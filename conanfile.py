@@ -10,7 +10,7 @@ class UnrealDeps(object):
                                     for p in deps_cpp_info.lib_paths)
         self.bin_paths = ",\n".join('"%s"' % p.replace("\\", "/")
                                     for p in deps_cpp_info.bin_paths)
-        self.libs = ", ".join('"%s"' % p for p in deps_cpp_info.libs)
+        self.libs = ", ".join('"%s.lib"' % p for p in deps_cpp_info.libs)
         self.defines = ", ".join('"%s"' % p for p in deps_cpp_info.defines)
         self.cppflags = ", ".join('"%s"' % p for p in deps_cpp_info.cppflags)
         self.cflags = ", ".join('"%s"' % p for p in deps_cpp_info.cflags)
@@ -22,12 +22,10 @@ class UnrealDeps(object):
 class Unreal(Generator):
     @property
     def filename(self):
-        return "Source/ConanInfo.Build.cs"
+        return "Source/ConanBuildInfo/ConanInfo.Build.cs"
 
     @property
     def content(self):
-
-
         template = ('ConanLibInfo {dep}Info = new ConanLibInfo("{dep}");\n'
                     '{dep}Info.IncludePaths.AddRange(new string[] {{{deps.include_paths}}});\n'
                     '{dep}Info.LibPaths.AddRange(new string[] {{{deps.lib_paths}}});\n'
@@ -38,8 +36,7 @@ class Unreal(Generator):
                     '{dep}Info.CFlags.AddRange(new string[] {{{deps.cflags}}});\n'
                     '{dep}Info.SharedLinkFlags.AddRange(new string[] {{{deps.sharedlinkflags}}});\n'
                     '{dep}Info.LinkFlags.AddRange(new string[] {{{deps.exelinkflags}}});\n'
-                    'dictionary.Add("{dep}", {dep}Info);\n')
-
+                    'libs.Add("{dep}", {dep}Info);\n')
 
         sections = []
 

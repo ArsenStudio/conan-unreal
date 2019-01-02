@@ -35,9 +35,7 @@ public class ConanLibInfo {
 public class ConanBuildInfo {
 
     private ModuleRules rules;
-
-    private static Dictionary<string, ConanLibInfo> libs;
-
+    
     private static Dictionary<string, ConanLibInfo> libs;
 
     public static ConanBuildInfo SetupTarget(ModuleRules rules) {
@@ -62,14 +60,14 @@ public class ConanBuildInfo {
 
     private void SetupLibrary(ConanLibInfo libinfo) {
         rules.PublicSystemIncludePaths.AddRange(libinfo.IncludePaths);
-        rules.PublicRuntimeLibraryPaths.AddRange(libinfo.BinPaths);
+        // rules.PublicRuntimeLibraryPaths.AddRange(libinfo.BinPaths);
         rules.PublicLibraryPaths.AddRange(libinfo.LibPaths);
         rules.PublicAdditionalLibraries.AddRange(libinfo.Libraries);
         rules.PublicDefinitions.AddRange(libinfo.Definitions);
 
-        rules.Target.AdditionalCompilerArguments.AddRange(libinfo.CppFlags);
-        rules.Target.AdditionalLinkerArguments.AddRange(libinfo.LinkFlags);
-        rules.Target.AdditionalLinkerArguments.AddRange(libinfo.SharedLinkFlags);
+        // rules.Target.AdditionalCompilerArguments.AddRange(libinfo.CppFlags);
+        // rules.Target.AdditionalLinkerArguments.AddRange(libinfo.LinkFlags);
+        // rules.Target.AdditionalLinkerArguments.AddRange(libinfo.SharedLinkFlags);
     }
 
     public void SetupLibrary(string libname) {
@@ -90,7 +88,7 @@ public class ConanBuildInfo {
 
     public void SetupAllLibraries() {
         foreach (KeyValuePair<string, ConanLibInfo> item in libs) {
-            SetupLibrary(item.Value)
+            SetupLibrary(item.Value);
         }
     }
 }
