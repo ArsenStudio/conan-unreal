@@ -1,5 +1,6 @@
 from conans import ConanFile, tools
 from conans.model import Generator
+from conans.client.generators import registered_generators
 
 class UnrealDeps(object):
 
@@ -26,7 +27,7 @@ class Unreal(Generator):
 
     @property
     def content(self):
-        template = ('ConanLibInfo {dep}Info = new ConanLibInfo("{dep}");\n'
+        template = ('ConanLibraryInfo {dep}Info = new ConanLibraryInfo("{dep}");\n'
                     '{dep}Info.IncludePaths.AddRange(new string[] {{{deps.include_paths}}});\n'
                     '{dep}Info.LibPaths.AddRange(new string[] {{{deps.lib_paths}}});\n'
                     '{dep}Info.BinPaths.AddRange(new string[] {{{deps.bin_paths}}});\n'
@@ -36,7 +37,7 @@ class Unreal(Generator):
                     '{dep}Info.CFlags.AddRange(new string[] {{{deps.cflags}}});\n'
                     '{dep}Info.SharedLinkFlags.AddRange(new string[] {{{deps.sharedlinkflags}}});\n'
                     '{dep}Info.LinkFlags.AddRange(new string[] {{{deps.exelinkflags}}});\n'
-                    'libs.Add("{dep}", {dep}Info);\n')
+                    'libraries.Add("{dep}", {dep}Info);\n')
 
         sections = []
 
@@ -48,6 +49,8 @@ class Unreal(Generator):
 
         file_content = tools.load("Build.cs")
         return file_content.replace("{{libs_init}}", "\n".join(sections))
+
+registered_generators.add("unreal", Unreal)
 
 class UnrealGeneratorPackage(ConanFile):
     name = "UnrealGen"
