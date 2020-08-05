@@ -1,6 +1,6 @@
 [requires]
 Args/5.0.1.4@igormironchik/stable
-UnrealGen/1.0@arsen-studio/testing
+UnrealGen/1.0@frozenstorm-interactive/stable
 
 [generators]
 Unreal
