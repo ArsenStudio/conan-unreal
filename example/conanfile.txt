@@ -1,6 +1,7 @@
 [requires]
-Args/5.0.1.4@igormironchik/stable
-UnrealGen/1.0@frozenstorm-interactive/stable
+args/6.2.2@pavel-belikov/stable
+protobuf/3.11.4
+UnrealGen/2.0@frozenstorm-interactive/stable
 
 [generators]
-Unreal
+unreal

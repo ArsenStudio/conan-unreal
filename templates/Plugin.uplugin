@@ -1,0 +1,18 @@
+{
+	"FileVersion": 1,
+	"Version": 1,
+	"VersionName": "{version}",
+	"FriendlyName": "{name}",
+	"Description": "",
+	"Category": "Misc",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "QuestGraph",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
