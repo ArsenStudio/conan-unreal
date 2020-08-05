@@ -55,7 +55,7 @@ registered_generators.add("unreal", Unreal)
 class UnrealGeneratorPackage(ConanFile):
     name = "UnrealGen"
     version = "1.0"
-    url = "https://gitlab.com/ArsenStudio/Unreal/conan-unreal"
+    url = "https://github.com/FrozenStormInteractive/conan-unreal-generator"
     license = "MIT"
     exports = "LICENSE"
     exports_sources = "Build.cs"
