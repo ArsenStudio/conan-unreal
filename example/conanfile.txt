@@ -1,6 +1,6 @@
 [requires]
-args/6.2.2@pavel-belikov/stable
-protobuf/3.11.4
+rapidjson/cci.20200410
+rttr/0.9.6
 UnrealGen/2.0@frozenstorm-interactive/stable
 
 [generators]

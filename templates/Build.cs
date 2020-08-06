@@ -32,42 +32,8 @@ namespace Conan
 
         public static void Link(TargetRules rules)
         {
-            rules.AdditionalCompilerArguments += String.Join(" ", libraryInfo.CppFlags);
-            rules.AdditionalLinkerArguments += String.Join(" ", libraryInfo.LinkFlags) + String.Join(" ", libraryInfo.SharedLinkFlags);
-        }
-    }
-
-
-    public class ConanLibraryInfo {
-
-        private string name;
-
-        public List<string> IncludePaths = new List<string>();
-
-        public List<string> LibPaths = new List<string>();
-
-        public List<string> BinPaths = new List<string>();
-
-        public List<string> Libraries = new List<string>();
-
-        public List<string> Definitions = new List<string>();
-
-        public List<string> CppFlags = new List<string>();
-
-        public List<string> CFlags = new List<string>();
-
-        public List<string> SharedLinkFlags = new List<string>();
-
-        public List<string> LinkFlags = new List<string>();
-
-        public ConanLibraryInfo(string name) 
-        {
-            this.name = name;
-        }
-
-        public string GetName() 
-        {
-            return name;
+            rules.AdditionalCompilerArguments += "{cppflags}";
+            rules.AdditionalLinkerArguments += "{sharedlinkflags} {exelinkflags}";
         }
     }
 }

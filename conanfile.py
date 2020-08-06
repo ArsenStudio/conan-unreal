@@ -6,24 +6,6 @@ from conans.client.generators import registered_generators
 def transform_name(name):
     return name.replace("_", " ").replace("-", " ").title().replace(" ", "")
 
-class UnrealDeps(object):
-
-    def __init__(self, deps_cpp_info):
-        self.include_paths = ",\n".join('"%s"' % p.replace("\\", "/")
-                                        for p in deps_cpp_info.include_paths)
-        self.lib_paths = ",\n".join('"%s"' % p.replace("\\", "/")
-                                    for p in deps_cpp_info.lib_paths)
-        self.bin_paths = ",\n".join('"%s"' % p.replace("\\", "/")
-                                    for p in deps_cpp_info.bin_paths)
-        self.libs = ", ".join('"%s.lib"' % p for p in deps_cpp_info.libs)
-        self.defines = ", ".join('"%s"' % p for p in deps_cpp_info.defines)
-        self.cppflags = ", ".join('"%s"' % p for p in deps_cpp_info.cppflags)
-        self.cflags = ", ".join('"%s"' % p for p in deps_cpp_info.cflags)
-        self.sharedlinkflags = ", ".join('"%s"' % p for p in deps_cpp_info.sharedlinkflags)
-        self.exelinkflags = ", ".join('"%s"' % p for p in deps_cpp_info.exelinkflags)
-
-        self.rootpath = "%s" % deps_cpp_info.rootpath.replace("\\", "/")
-
 class Unreal(Generator):
 
     root_dir = "Plugins/ConanVendor"
@@ -38,8 +20,13 @@ class Unreal(Generator):
         template = template.replace("{include_paths}", ",\n".join('"%s"' % p.replace("\\", "/") for p in deps_cpp_info.include_paths))
         template = template.replace("{bin_paths}", ",\n".join('"%s"' % p.replace("\\", "/") for p in deps_cpp_info.bin_paths))
         template = template.replace("{lib_paths}", ",\n".join('"%s"' % p.replace("\\", "/") for p in deps_cpp_info.lib_paths))
-        template = template.replace("{libs}", ", ".join('"%s.lib"' % p for p in deps_cpp_info.libs))
+        template = template.replace("{libs}", ", ".join('"%s"' % p for p in deps_cpp_info.libs))
         template = template.replace("{definitions}", ", ".join('"%s"' % p for p in deps_cpp_info.defines))
+
+        template = template.replace("{cppflags}", " ".join('%s' % p for p in deps_cpp_info.cppflags))
+        template = template.replace("{cflags}", " ".join('%s' % p for p in deps_cpp_info.cflags))
+        template = template.replace("{sharedlinkflags}", " ".join('%s' % p for p in deps_cpp_info.sharedlinkflags))
+        template = template.replace("{exelinkflags}", " ".join('%s' % p for p in deps_cpp_info.exelinkflags))
 
         return template
 
@@ -57,24 +44,25 @@ class Unreal(Generator):
             if len(self.deps_build_info[package].components) > 0:
                 for component in self.deps_build_info[package].components:
                     component_name = transform_name(component)
-                    component_dir = os.path.join(package_dir, component_name)
-
+                    component_dir = os.path.join(package_dir, "Source", component_name)
                     files[os.path.join(component_dir, component_name + ".Build.cs")] = self.generate_module_file(component_name, self.deps_build_info[package].components)
-
                     modules.append(component_name)
 
             else:
                 component_name = package_name
-                component_dir = os.path.join(package_dir, component_name)
-
+                component_dir = os.path.join(package_dir, "Source", component_name)
                 files[os.path.join(component_dir, component_name + ".Build.cs")] = self.generate_module_file(component_name, self.deps_build_info[package])
-
                 modules.append(component_name)
 
-            
-            file_content = load(os.path.join(os.path.dirname(__file__), "templates", "Plugin.uplugin")).replace("{name}", package_name).replace("{version}", self.deps_build_info[package].version)
+            module_manifests = []
+            for module in modules:
+                module_manifests.append('{ "Name": "{name}", "Type": "{type}", "LoadingPhase": "Default" }'.replace('{name}', module).replace('{type}', "Runtime"))
 
-            files[os.path.join(package_dir, package_name + ".uplugin")] = file_content
+            plugin_file = load(os.path.join(os.path.dirname(__file__), "templates", "Plugin.uplugin"))
+            plugin_file = plugin_file.replace("{name}", package_name)
+            plugin_file = plugin_file.replace("{version}", self.deps_build_info[package].version)
+            plugin_file = plugin_file.replace("{modules}", ', \n'.join(module_manifests))
+            files[os.path.join(package_dir, package_name + ".uplugin")] = plugin_file
 
         return files
 
@@ -109,3 +97,25 @@ class UnrealGeneratorPackage(ConanFile):
     url = "https://github.com/FrozenStormInteractive/conan-unreal-generator"
     license = "MIT"
     exports = ["templates/*"]
+
+    options = {
+        "module_type": [
+            "Runtime",
+            "RuntimeNoCommandlet",
+            "RuntimeAndProgram",
+            "CookedOnly",
+            "UncookedOnly",
+            "Developer",
+            "DeveloperTool",
+            "Editor",
+            "EditorNoCommandlet",
+            "EditorAndProgram",
+            "Program",
+            "ServerOnly",
+            "ClientOnly",
+            "ClientOnlyNoCommandlet",
+        ],
+    }
+    default_options = {
+        "module_type": "Runtime",
+    }

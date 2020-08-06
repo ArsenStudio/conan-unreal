@@ -9,10 +9,6 @@
 	"IsBetaVersion": false,
 	"Installed": false,
 	"Modules": [
-		{
-			"Name": "QuestGraph",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
+		{modules}
 	]
 }
