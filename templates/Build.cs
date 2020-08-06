@@ -16,15 +16,30 @@ public class {name} : ModuleRules
             {bin_paths}
         });
 #endif
+
+        // TODO: Use the full path in PublicAdditionalLibraries. Solution: loop against libs and paths and check if full library path exists.
+#if UE_4_24_OR_LATER
+        PublicSystemLibraryPaths.AddRange(new string[] {
+#else
         PublicLibraryPaths.AddRange(new string[] {
+#endif
             {lib_paths}
         });
+#if UE_4_24_OR_LATER
+        PublicSystemLibraries.AddRange(new string[] {
+#else
         PublicAdditionalLibraries.AddRange(new string[] {
+#endif
             {libs}
         });
+
+#if UE_4_19_OR_LATER
         PublicDefinitions.AddRange(new string[] {
+#else
+        Definitions.AddRange(new string[] {
+#endif
             {definitions}
-        });
+        }); 
     }
 
     public static void Link(TargetRules rules)
