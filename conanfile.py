@@ -20,7 +20,7 @@ class Unreal(Generator):
         template = template.replace("{include_paths}", ",\n".join('"%s"' % p.replace("\\", "/") for p in deps_cpp_info.include_paths))
         template = template.replace("{bin_paths}", ",\n".join('"%s"' % p.replace("\\", "/") for p in deps_cpp_info.bin_paths))
         template = template.replace("{lib_paths}", ",\n".join('"%s"' % p.replace("\\", "/") for p in deps_cpp_info.lib_paths))
-        template = template.replace("{libs}", ", ".join('"%s"' % p for p in deps_cpp_info.libs))
+        template = template.replace("{libs}", ", ".join('"%s.lib"' % p for p in deps_cpp_info.libs))
         template = template.replace("{definitions}", ", ".join('"%s"' % p for p in deps_cpp_info.defines))
 
         template = template.replace("{cppflags}", " ".join('%s' % p for p in deps_cpp_info.cppflags))
@@ -54,14 +54,9 @@ class Unreal(Generator):
                 files[os.path.join(component_dir, component_name + ".Build.cs")] = self.generate_module_file(component_name, self.deps_build_info[package])
                 modules.append(component_name)
 
-            module_manifests = []
-            for module in modules:
-                module_manifests.append('{ "Name": "{name}", "Type": "{type}", "LoadingPhase": "Default" }'.replace('{name}', module).replace('{type}', "Runtime"))
-
             plugin_file = load(os.path.join(os.path.dirname(__file__), "templates", "Plugin.uplugin"))
             plugin_file = plugin_file.replace("{name}", package_name)
             plugin_file = plugin_file.replace("{version}", self.deps_build_info[package].version)
-            plugin_file = plugin_file.replace("{modules}", ', \n'.join(module_manifests))
             files[os.path.join(package_dir, package_name + ".uplugin")] = plugin_file
 
         return files
@@ -97,25 +92,3 @@ class UnrealGeneratorPackage(ConanFile):
     url = "https://github.com/FrozenStormInteractive/conan-unreal-generator"
     license = "MIT"
     exports = ["templates/*"]
-
-    options = {
-        "module_type": [
-            "Runtime",
-            "RuntimeNoCommandlet",
-            "RuntimeAndProgram",
-            "CookedOnly",
-            "UncookedOnly",
-            "Developer",
-            "DeveloperTool",
-            "Editor",
-            "EditorNoCommandlet",
-            "EditorAndProgram",
-            "Program",
-            "ServerOnly",
-            "ClientOnly",
-            "ClientOnlyNoCommandlet",
-        ],
-    }
-    default_options = {
-        "module_type": "Runtime",
-    }

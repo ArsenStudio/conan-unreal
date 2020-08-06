@@ -9,6 +9,5 @@
 	"IsBetaVersion": false,
 	"Installed": false,
 	"Modules": [
-		{modules}
 	]
 }
