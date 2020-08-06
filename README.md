@@ -8,16 +8,16 @@ It is a **generator package**, it is not embedded in the main conan.io codebase,
 
 ### Installing
 
-The `unreal` generator is packaged inside `UnrealGen/1.0@frozenstorm-interactive/stable`. So, you need to require it on your 
+The `unreal` generator is packaged inside `UnrealGen/2.0@frozenstorm-interactive/stable`. So, you need to require it on your 
 conanfile. You can then configuring `unreal` or `Unreal` generator.
 
 ```txt
 [requires]
 ...
-UnrealGen/1.0@frozenstorm-interactive/stable
+UnrealGen/2.0@frozenstorm-interactive/stable
 ```
 
-This generator create a file named `Source/ConanBuildInfo/ConanInfo.Build.cs` that will be used by Unreal Build System.
+This generator create plugins with externals modules.
 
 ```txt
 ...
@@ -25,46 +25,31 @@ This generator create a file named `Source/ConanBuildInfo/ConanInfo.Build.cs` th
 unreal
 ```
 
-You can add the `Source/ConanBuildInfo` folder in your ignorefile.
+You can add the `Source/ConanVendor` folder in your ignorefile.
 
 ```txt
 # Conan
-Source/ConanBuildInfo/*
-```
-
-### Setup Conan in Unreal
-
-On your `.Target.cs` and `.Build.cs`, import `Conan` namespace with:
-
-```c#
-using Conan;
-```
-
-Init Conan in your `TargetRules` or `ModuleRules` constructor with:
-
-```c#
-ConanBuildInfo.Setup();
+Source/ConanVendor/*
 ```
 
 ### Linking
 
-#### Link one library
-
 ```c#
-this.LinkConanLibrary("Assimp");
+PublicDependencyModuleNames.AddRange(new string[] { 
+    "Core", 
+    
+    ...
+
+    "Rapidjson", 
+    "Rttr",
+});
 ```
 
-#### Link multiple libraries
+## Limitations
 
-```c#
-this.LinkConanLibraries(new string[] { "Assimp", "Args" });
-```
-
-#### Link all libraries
-
-```c#
-this.LinkAllConanLibraries();
-```
+- Conanfile must be located next to the uproject file.
+- Only works on Windows.
+- It doesn't support integration into plugins.
 
 ## Troubleshooting
 
